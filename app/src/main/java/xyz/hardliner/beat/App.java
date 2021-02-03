@@ -1,7 +1,8 @@
 package xyz.hardliner.beat;
 
-import xyz.hardliner.beat.service.FareEstimator;
+import xyz.hardliner.beat.service.DataProcessor;
 import xyz.hardliner.beat.service.FileReader;
+import xyz.hardliner.beat.service.RidesHandler;
 
 public class App {
 
@@ -10,7 +11,10 @@ public class App {
     }
 
     public static void main(String[] args) {
-        var unit = new FareEstimator(new FileReader("./app/src/test/resources/paths.csv"));
-        unit.run();
+        var unit = new DataProcessor(
+            new FileReader("./app/src/test/resources/paths.csv"),
+            new RidesHandler()
+        );
+        unit.process();
     }
 }
