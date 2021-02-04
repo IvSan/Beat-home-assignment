@@ -1,30 +1,35 @@
 package xyz.hardliner.beat.domain;
 
+import java.math.BigDecimal;
 import java.time.ZoneId;
 
-import static xyz.hardliner.beat.service.TimezonesHandler.retrieveTimeZone;
+import static xyz.hardliner.beat.utils.TimezonesHelper.retrieveTimeZone;
 
 public class Ride {
 
-    public final DataEntry lastData;
-    private final ZoneId timezone;
-    private int cost; // In cents
+    private static final BigDecimal MIN_FARE = BigDecimal.valueOf(3.47);
+
+    public final long rideId;
+    public final ZoneId timezone;
+    public DataEntry lastData;
+    private BigDecimal cost;
 
     public Ride(DataEntry data) {
+        this.rideId = data.rideId;
         this.lastData = data;
         this.timezone = retrieveTimeZone(data.position.latLong);
-        this.cost = 130;
+        this.cost = BigDecimal.valueOf(1.3);
     }
 
-    public float getCost() {
-        if (cost <= 347) {
-            return 3.47f;
+    public BigDecimal getCost() {
+        if (cost.compareTo(MIN_FARE) < 0) {
+            return MIN_FARE;
         }
-        return cost / 100f;
+        return cost;
     }
 
-    public void addCost(int cost) {
-        this.cost += cost;
+    public void addCost(BigDecimal toAdd) {
+        this.cost = this.cost.add(toAdd);
     }
 
     @Override

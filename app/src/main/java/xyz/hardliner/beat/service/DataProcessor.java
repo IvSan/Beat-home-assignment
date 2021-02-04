@@ -4,9 +4,11 @@ import xyz.hardliner.beat.domain.DataEntry;
 import xyz.hardliner.beat.domain.Ride;
 import xyz.hardliner.beat.exception.EndOfFileException;
 
+import java.util.HashMap;
 import java.util.function.Supplier;
 
 import static java.lang.System.currentTimeMillis;
+import static xyz.hardliner.beat.service.LineParser.parse;
 
 public class DataProcessor {
 
@@ -19,36 +21,35 @@ public class DataProcessor {
         this.ridesHandler = ridesHandler;
     }
 
-    public void process() {
-        Supplier<DataEntry> reader = fileReader.getReader();
+    public HashMap<Long, Ride> process() {
+        Supplier<String> reader = fileReader.getReader();
         long startTime = currentTimeMillis();
         try {
             processAll(reader);
         } catch (EndOfFileException ex) {
             System.out.println("Processing done. Execution time: " + (currentTimeMillis() - startTime) / 1000f + " sec.");
-            System.out.println(ridesHandler.rides);
+            System.out.println(ridesHandler.getRides());
         }
+        return ridesHandler.getRides();
     }
 
-    private void processAll(Supplier<DataEntry> reader) {
+    private void processAll(Supplier<String> reader) {
         while (true) {
+            var line = reader.get();
             try {
-                processNext(reader.get());
-            } catch (EndOfFileException ex) {
-                throw ex;
+                processNext(parse(line));
             } catch (Exception ex) {
-                System.out.println("Exception while processing: " + ex.getMessage());
+                System.out.println("While line '" + line + "' processing exception happened: " + ex.getMessage());
                 ex.printStackTrace();
             }
         }
     }
 
     private void processNext(DataEntry data) {
-        if (!ridesHandler.rides.containsKey(data.rideId)) {
-            ridesHandler.rides.put(data.rideId, new Ride(data));
+        if (!ridesHandler.containsRide(data.rideId)) {
+            ridesHandler.createRide(data);
+            return;
         }
-
-        var ride = ridesHandler.rides.get(data.rideId);
-        ride.addCost(99);
+        ridesHandler.updateRide(data);
     }
 }

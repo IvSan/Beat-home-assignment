@@ -1,4 +1,4 @@
-package xyz.hardliner.beat.service;
+package xyz.hardliner.beat.utils;
 
 import net.iakovlev.timeshape.TimeZoneEngine;
 import xyz.hardliner.beat.domain.LatLong;
@@ -7,7 +7,7 @@ import xyz.hardliner.beat.domain.Position;
 import java.time.Instant;
 import java.time.ZoneId;
 
-public class TimezonesHandler {
+public class TimezonesHelper {
 
     private static final TimeZoneEngine engine = TimeZoneEngine.initialize();
 
@@ -16,12 +16,13 @@ public class TimezonesHandler {
             .orElseThrow(() -> new IllegalArgumentException("Cannot retrieve timezone for: " + latLong));
     }
 
-    public static int getLocalHour(Position position) {
-        return getLocalHour(position.timestamp, retrieveTimeZone(position.latLong));
+    public static int getLocalMinutesOfDay(Position position) {
+        return getLocalMinutesOfDay(position.timestamp, retrieveTimeZone(position.latLong));
     }
 
-    public static int getLocalHour(long timestamp, ZoneId zoneId) {
-        return Instant.ofEpochSecond(timestamp).atZone(zoneId).getHour();
+    public static int getLocalMinutesOfDay(long timestamp, ZoneId zoneId) {
+        var zonedDateTime = Instant.ofEpochSecond(timestamp).atZone(zoneId);
+        return zonedDateTime.getHour() * 60 + zonedDateTime.getMinute();
     }
 
 }

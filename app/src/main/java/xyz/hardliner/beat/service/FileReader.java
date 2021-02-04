@@ -1,8 +1,6 @@
 package xyz.hardliner.beat.service;
 
-import xyz.hardliner.beat.domain.DataEntry;
 import xyz.hardliner.beat.exception.EndOfFileException;
-import xyz.hardliner.beat.exception.InvalidDataEntry;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -11,20 +9,18 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
-import static xyz.hardliner.beat.service.LineParser.parse;
-
 public class FileReader {
 
     public final String path;
     private FileInputStream inputStream;
     private Scanner scanner;
-    private Supplier<DataEntry> reader;
+    private Supplier<String> reader;
 
     public FileReader(String path) {
         this.path = path;
     }
 
-    public Supplier<DataEntry> getReader() {
+    public Supplier<String> getReader() {
         if (reader != null) {
             return reader;
         }
@@ -38,21 +34,11 @@ public class FileReader {
 
         return () -> {
             try {
-                return getNextValidDataEntry(scanner);
+                return scanner.nextLine();
             } catch (NoSuchElementException ex) {
                 throw new EndOfFileException();
             }
         };
-    }
-
-    private static DataEntry getNextValidDataEntry(Scanner scanner) {
-        while (true) {
-            try {
-                return parse(scanner.nextLine());
-            } catch (InvalidDataEntry ex) {
-                System.out.println(ex.getMessage());
-            }
-        }
     }
 
     public void close() {
