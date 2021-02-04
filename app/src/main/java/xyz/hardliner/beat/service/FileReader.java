@@ -9,7 +9,7 @@ import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.function.Supplier;
 
-public class FileReader {
+public class FileReader implements AutoCloseable{
 
     public final String path;
     private FileInputStream inputStream;

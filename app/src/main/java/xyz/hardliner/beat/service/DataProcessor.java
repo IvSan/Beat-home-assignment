@@ -22,15 +22,16 @@ public class DataProcessor {
     }
 
     public HashMap<Long, Ride> process() {
-        Supplier<String> reader = fileReader.getReader();
-        long startTime = currentTimeMillis();
-        try {
-            processAll(reader);
-        } catch (EndOfFileException ex) {
-            System.out.println("Processing done. Execution time: " + (currentTimeMillis() - startTime) / 1000f + " sec.");
-            System.out.println(ridesHandler.getRides());
+        try (fileReader) {
+            Supplier<String> reader = fileReader.getReader();
+            long startTime = currentTimeMillis();
+            try {
+                processAll(reader);
+            } catch (EndOfFileException ex) {
+                System.out.println("Processing done. Execution time: " + (currentTimeMillis() - startTime) / 1000f + " sec.");
+            }
+            return ridesHandler.getRides();
         }
-        return ridesHandler.getRides();
     }
 
     private void processAll(Supplier<String> reader) {

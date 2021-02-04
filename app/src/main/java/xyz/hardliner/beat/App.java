@@ -8,10 +8,6 @@ import static java.math.RoundingMode.HALF_UP;
 
 public class App {
 
-    public String getGreeting() {
-        return "Hello World!";
-    }
-
     public static void main(String[] args) {
         var unit = new DataProcessor(
             new FileReader("./app/src/test/resources/time_sorted_paths.csv"),
