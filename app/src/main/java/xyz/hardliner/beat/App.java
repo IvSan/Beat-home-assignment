@@ -12,7 +12,7 @@ public class App {
 
     public static void main(String[] args) {
         var unit = new DataProcessor(
-            new FileReader("./app/src/test/resources/paths.csv"),
+            new FileReader("./app/src/test/resources/time_sorted_paths.csv"),
             new RidesHandler()
         );
         unit.process();
