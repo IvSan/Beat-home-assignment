@@ -23,12 +23,23 @@ public class DataProcessor {
         Supplier<DataEntry> reader = fileReader.getReader();
         long startTime = currentTimeMillis();
         try {
-            while (true) {
-                processNext(reader.get());
-            }
+            processAll(reader);
         } catch (EndOfFileException ex) {
             System.out.println("Processing done. Execution time: " + (currentTimeMillis() - startTime) / 1000f + " sec.");
             System.out.println(ridesHandler.rides);
+        }
+    }
+
+    private void processAll(Supplier<DataEntry> reader) {
+        while (true) {
+            try {
+                processNext(reader.get());
+            } catch (EndOfFileException ex) {
+                throw ex;
+            } catch (Exception ex) {
+                System.out.println("Exception while processing: " + ex.getMessage());
+                ex.printStackTrace();
+            }
         }
     }
 
@@ -36,7 +47,6 @@ public class DataProcessor {
         if (!ridesHandler.rides.containsKey(data.rideId)) {
             ridesHandler.rides.put(data.rideId, new Ride(data));
         }
-        System.out.println(data);
 
         var ride = ridesHandler.rides.get(data.rideId);
         ride.addCost(99);

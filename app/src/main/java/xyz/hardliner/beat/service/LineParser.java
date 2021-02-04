@@ -2,6 +2,7 @@ package xyz.hardliner.beat.service;
 
 import xyz.hardliner.beat.domain.DataEntry;
 import xyz.hardliner.beat.domain.LatLong;
+import xyz.hardliner.beat.domain.Position;
 import xyz.hardliner.beat.exception.InvalidDataEntry;
 
 import static java.lang.Double.parseDouble;
@@ -14,9 +15,10 @@ public class LineParser {
         try {
             return new DataEntry(
                 parseLong(parts[0]),
-                new LatLong(parseDouble(parts[1]), parseDouble(parts[2])),
-                parseLong(parts[3])
-            );
+                new Position(
+                    new LatLong(parseDouble(parts[1]), parseDouble(parts[2])),
+                    parseLong(parts[3])
+                ));
         } catch (Exception ex) {
             throw new InvalidDataEntry("Cannot parse line: " + line, ex);
         }
