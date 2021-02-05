@@ -3,6 +3,7 @@ package xyz.hardliner.beat.domain;
 import java.math.BigDecimal;
 import java.time.ZoneId;
 
+import static java.math.RoundingMode.HALF_UP;
 import static xyz.hardliner.beat.utils.TimezonesHelper.retrieveTimeZone;
 
 public class Ride {
@@ -25,7 +26,7 @@ public class Ride {
         if (cost.compareTo(MIN_FARE) < 0) {
             return MIN_FARE;
         }
-        return cost;
+        return cost.setScale(2, HALF_UP);
     }
 
     public void addCost(BigDecimal toAdd) {

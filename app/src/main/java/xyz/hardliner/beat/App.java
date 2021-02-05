@@ -18,7 +18,7 @@ public class App {
             System.out.printf("Ride id='%d', location='%s', fare='%s'%n",
                 ride.rideId,
                 ride.timezone,
-                ride.getCost().setScale(2, HALF_UP)
+                ride.getCost()
             );
         });
     }

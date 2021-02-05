@@ -27,7 +27,7 @@ class RideTest {
 
         assertEquals(BigDecimal.valueOf(3.47), ride.getCost());
 
-        ride.addCost(BigDecimal.valueOf(2.99));
+        ride.addCost(BigDecimal.valueOf(2.985));
 
         assertEquals(BigDecimal.valueOf(4.29), ride.getCost());
     }
