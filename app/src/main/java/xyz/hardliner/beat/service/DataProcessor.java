@@ -1,6 +1,5 @@
 package xyz.hardliner.beat.service;
 
-import xyz.hardliner.beat.domain.DataEntry;
 import xyz.hardliner.beat.domain.Ride;
 import xyz.hardliner.beat.exception.EndOfFileException;
 
@@ -26,7 +25,7 @@ public class DataProcessor {
             Supplier<String> reader = fileReader.getReader();
             long startTime = currentTimeMillis();
             try {
-                processAll(reader);
+                processDataFromSupplier(reader);
             } catch (EndOfFileException ex) {
                 System.out.println("Processing done. Execution time: " + (currentTimeMillis() - startTime) / 1000f + " sec.");
             }
@@ -34,23 +33,15 @@ public class DataProcessor {
         }
     }
 
-    private void processAll(Supplier<String> reader) {
+    private void processDataFromSupplier(Supplier<String> supplier) {
         while (true) {
-            var line = reader.get();
+            var line = supplier.get();
             try {
-                processNext(parse(line));
+                ridesHandler.process(parse(line));
             } catch (Exception ex) {
                 System.out.println("While line '" + line + "' processing exception happened: " + ex.getMessage());
                 ex.printStackTrace();
             }
         }
-    }
-
-    private void processNext(DataEntry data) {
-        if (!ridesHandler.containsRide(data.rideId)) {
-            ridesHandler.createRide(data);
-            return;
-        }
-        ridesHandler.updateRide(data);
     }
 }

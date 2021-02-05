@@ -1,6 +1,7 @@
 package xyz.hardliner.beat.domain;
 
 public class Position {
+
     public final LatLong latLong;
     public final long timestamp;
 
@@ -15,9 +16,5 @@ public class Position {
             "latLong=" + latLong +
             ", timestamp=" + timestamp +
             '}';
-    }
-
-    public boolean isDaytime() {
-        return false; // TODO
     }
 }
