@@ -53,8 +53,6 @@ public class RidesHandler {
         var segmentDistance = ride.lastData.position.latLong.distanceTo(data.position.latLong);
         var segmentTime = data.position.timestamp - ride.lastData.position.timestamp;
         var segmentSpeed = segmentDistance / segmentTime;
-        System.out.printf("%f km, %d sec, %f km/s, %f$%n", segmentDistance, segmentTime, segmentSpeed / KMH_TO_KMSEC,
-            DAY_TIME_FARE.multiply(valueOf(segmentDistance))); // TODO remove
 
         if (segmentSpeed > MAX_VALID_SPEED_KM_SEC) {
             throw new TopSpeedBreached("Max allowed speed breach: " + String.format("%.2f", segmentSpeed / KMH_TO_KMSEC) + " km/h");
