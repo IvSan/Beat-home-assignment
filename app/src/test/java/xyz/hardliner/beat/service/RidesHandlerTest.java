@@ -29,7 +29,7 @@ class RidesHandlerTest {
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(datapoint, underTest.getRides().get(855L).lastData);
-        assertEquals(BigDecimal.valueOf(3.47), underTest.getRides().get(855L).getCost());
+        assertEquals(BigDecimal.valueOf(3.47), underTest.getRides().get(855L).getNormalizedCost());
     }
 
     @Test
@@ -46,7 +46,7 @@ class RidesHandlerTest {
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(stop, underTest.getRides().get(855L).lastData);
-        assertEquals(BigDecimal.valueOf(4.61), underTest.getRides().get(855L).getCost());
+        assertEquals(BigDecimal.valueOf(4.61), underTest.getRides().get(855L).getNormalizedCost());
     }
 
     @Test
@@ -63,7 +63,7 @@ class RidesHandlerTest {
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(stop, underTest.getRides().get(855L).lastData);
-        assertEquals(BigDecimal.valueOf(5.95), underTest.getRides().get(855L).getCost());
+        assertEquals(BigDecimal.valueOf(5.95), underTest.getRides().get(855L).getNormalizedCost());
     }
 
     @Test
@@ -83,7 +83,7 @@ class RidesHandlerTest {
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(stop, underTest.getRides().get(855L).lastData);
-        assertEquals(BigDecimal.valueOf(5.27), underTest.getRides().get(855L).getCost());
+        assertEquals(BigDecimal.valueOf(5.27), underTest.getRides().get(855L).getNormalizedCost());
     }
 
     @Test
@@ -103,7 +103,7 @@ class RidesHandlerTest {
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(stop, underTest.getRides().get(855L).lastData);
-        assertEquals(BigDecimal.valueOf(6.43), underTest.getRides().get(855L).getCost());
+        assertEquals(BigDecimal.valueOf(6.43), underTest.getRides().get(855L).getNormalizedCost());
     }
 
     @Test
@@ -127,7 +127,7 @@ class RidesHandlerTest {
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(checkpoint2, underTest.getRides().get(855L).lastData);
-        assertEquals(BigDecimal.valueOf(4.61), underTest.getRides().get(855L).getCost());
+        assertEquals(BigDecimal.valueOf(4.61), underTest.getRides().get(855L).getNormalizedCost());
     }
 
 }

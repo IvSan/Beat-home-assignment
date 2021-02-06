@@ -14,27 +14,34 @@ import static xyz.hardliner.beat.service.LineParser.parse;
 
 public class DataProcessor {
 
-    private static Logger log = LoggerFactory.getLogger(DataProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(DataProcessor.class);
 
     private final FileReader fileReader;
     private final RidesHandler ridesHandler;
+    private final ResultFileWriter fileWriter;
 
     public DataProcessor(FileReader fileReader,
-                         RidesHandler ridesHandler) {
+                         RidesHandler ridesHandler,
+                         ResultFileWriter fileWriter) {
         this.fileReader = fileReader;
         this.ridesHandler = ridesHandler;
+        this.fileWriter = fileWriter;
     }
 
     public HashMap<Long, Ride> process() {
         try (fileReader) {
             Supplier<String> reader = fileReader.getReader();
             long startTime = currentTimeMillis();
+
             try {
                 processDataFromSupplier(reader);
             } catch (EndOfFileException ex) {
                 log.info("Processing done. Execution time: " + (currentTimeMillis() - startTime) / 1000f + " sec.");
             }
-            return ridesHandler.getRides();
+
+            var rides = ridesHandler.getRides();
+            fileWriter.writeToFile(rides);
+            return rides;
         }
     }
 

@@ -17,7 +17,7 @@ class RideTest {
         assertEquals(855L, ride.rideId);
         assertEquals(ZoneId.of("Europe/Athens"), ride.timezone);
         assertEquals(datapoint, ride.lastData);
-        assertEquals(BigDecimal.valueOf(3.47), ride.getCost());
+        assertEquals(BigDecimal.valueOf(3.47), ride.getNormalizedCost());
     }
 
     @Test
@@ -25,10 +25,10 @@ class RideTest {
         var datapoint = new DataEntry(855L, new Position(new LatLong(38.034659, 23.855761), 1612530824L));
         var ride = new Ride(datapoint);
 
-        assertEquals(BigDecimal.valueOf(3.47), ride.getCost());
+        assertEquals(BigDecimal.valueOf(3.47), ride.getNormalizedCost());
 
         ride.addCost(BigDecimal.valueOf(2.985));
 
-        assertEquals(BigDecimal.valueOf(4.29), ride.getCost());
+        assertEquals(BigDecimal.valueOf(4.29), ride.getNormalizedCost());
     }
 }

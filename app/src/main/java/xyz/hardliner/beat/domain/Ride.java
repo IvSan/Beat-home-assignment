@@ -22,7 +22,7 @@ public class Ride {
         this.cost = BigDecimal.valueOf(1.3);
     }
 
-    public BigDecimal getCost() {
+    public BigDecimal getNormalizedCost() {
         if (cost.compareTo(MIN_FARE) < 0) {
             return MIN_FARE;
         }
