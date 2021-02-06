@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 import xyz.hardliner.beat.domain.Ride;
 import xyz.hardliner.beat.exception.EndOfFileException;
 
-import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static java.lang.String.format;
@@ -28,7 +28,7 @@ public class DataProcessor {
         this.fileWriter = fileWriter;
     }
 
-    public HashMap<Long, Ride> process() {
+    public Map<Long, Ride> process() {
         try (fileReader) {
             Supplier<String> reader = fileReader.getReader();
             long startTime = currentTimeMillis();

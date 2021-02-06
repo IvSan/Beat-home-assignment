@@ -7,7 +7,8 @@ import xyz.hardliner.beat.domain.Ride;
 import xyz.hardliner.beat.exception.TopSpeedBreached;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.String.format;
 import static java.math.BigDecimal.valueOf;
@@ -31,13 +32,13 @@ public class RidesHandler {
     private static final float MAX_VALID_SPEED_KM_SEC = MAX_VALID_SPEED_KM_H * KMH_TO_KMSEC;
     private static final float MAX_IDLE_SPEED_KM_SEC = MAX_IDLE_SPEED_KM_H * KMH_TO_KMSEC;
 
-    private final HashMap<Long, Ride> rides;
+    private final Map<Long, Ride> rides;
 
     public RidesHandler() {
-        rides = new HashMap<>();
+        rides = new ConcurrentHashMap<>();
     }
 
-    public HashMap<Long, Ride> getRides() {
+    public Map<Long, Ride> getRides() {
         return rides;
     }
 

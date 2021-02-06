@@ -7,7 +7,7 @@ import xyz.hardliner.beat.domain.Ride;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 
 public class ResultFileWriter {
 
@@ -19,7 +19,7 @@ public class ResultFileWriter {
         this.outputFileName = outputFileName;
     }
 
-    public void writeToFile(HashMap<Long, Ride> rides) {
+    public void writeToFile(Map<Long, Ride> rides) {
         try {
             saveWriteToFile(rides);
         } catch (Exception ex) {
@@ -28,7 +28,7 @@ public class ResultFileWriter {
         }
     }
 
-    private void saveWriteToFile(HashMap<Long, Ride> rides) throws IOException {
+    private void saveWriteToFile(Map<Long, Ride> rides) throws IOException {
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
 
         for (Ride ride : rides.values()) {
