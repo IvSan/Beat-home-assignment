@@ -8,6 +8,7 @@ import xyz.hardliner.beat.exception.EndOfFileException;
 import java.util.HashMap;
 import java.util.function.Supplier;
 
+import static java.lang.String.format;
 import static java.lang.System.currentTimeMillis;
 import static xyz.hardliner.beat.service.LineParser.parse;
 
@@ -41,9 +42,13 @@ public class DataProcessor {
         while (true) {
             var line = supplier.get();
             try {
+                log.debug(format("Processing line: %s", line));
                 ridesHandler.process(parse(line));
             } catch (Exception ex) {
-                log.warn(String.format("While line '%s' processing exception happened: %s", line, ex.getMessage()));
+                log.warn(format("While line '%s' processing exception happened: %s", line, ex.getMessage()));
+                if (log.isDebugEnabled()) {
+                    log.debug(format("While line '%s' processing exception happened: ", line), ex);
+                }
             }
         }
     }

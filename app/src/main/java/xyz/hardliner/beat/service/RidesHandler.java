@@ -1,5 +1,7 @@
 package xyz.hardliner.beat.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import xyz.hardliner.beat.domain.DataEntry;
 import xyz.hardliner.beat.domain.Ride;
 import xyz.hardliner.beat.exception.TopSpeedBreached;
@@ -7,10 +9,13 @@ import xyz.hardliner.beat.exception.TopSpeedBreached;
 import java.math.BigDecimal;
 import java.util.HashMap;
 
+import static java.lang.String.format;
 import static java.math.BigDecimal.valueOf;
 import static xyz.hardliner.beat.utils.TimezonesHelper.getLocalMinutesOfDay;
 
 public class RidesHandler {
+
+    private static Logger log = LoggerFactory.getLogger(RidesHandler.class);
 
     private static final int DAY_NIGHT_CHANGING_HOUR = 5;
     private static final int DAY_NIGHT_CHANGING_MINUTE = DAY_NIGHT_CHANGING_HOUR * 60;
@@ -44,7 +49,9 @@ public class RidesHandler {
     }
 
     private void createNewRide(DataEntry data) {
-        rides.put(data.rideId, new Ride(data));
+        var ride = new Ride(data);
+        debug(format("New ride found, ride id '%d', ride timezone '%s'", ride.rideId, ride.timezone));
+        rides.put(data.rideId, ride);
     }
 
     private void updateExistingRide(DataEntry data) {
@@ -53,22 +60,36 @@ public class RidesHandler {
         var segmentDistance = ride.lastData.position.latLong.distanceTo(data.position.latLong);
         var segmentTime = data.position.timestamp - ride.lastData.position.timestamp;
         var segmentSpeed = segmentDistance / segmentTime;
+        debug(format("S = %f km, dt = %d sec, V = %f km/h", segmentDistance, segmentTime, segmentSpeed / KMH_TO_KMSEC));
 
         if (segmentSpeed > MAX_VALID_SPEED_KM_SEC) {
-            throw new TopSpeedBreached("Max allowed speed breach: " + String.format("%.2f", segmentSpeed / KMH_TO_KMSEC) + " km/h");
+            throw new TopSpeedBreached("Max allowed speed breach: " + format("%.2f", segmentSpeed / KMH_TO_KMSEC) + " km/h");
         }
 
+        BigDecimal segmentCost;
         if (segmentDistance == 0.0d || segmentSpeed < MAX_IDLE_SPEED_KM_SEC) {
-            ride.addCost(IDLE_FARE.multiply(valueOf(segmentTime)));
+            segmentCost = IDLE_FARE.multiply(valueOf(segmentTime));
+            debug(format("Idle fare, cost is %s", segmentCost));
         } else {
             var localMinutesOfDay = getLocalMinutesOfDay(data.position.timestamp, ride.timezone);
             if (localMinutesOfDay == 0 || localMinutesOfDay > DAY_NIGHT_CHANGING_MINUTE) {
-                ride.addCost(DAY_TIME_FARE.multiply(valueOf(segmentDistance)));
+                segmentCost = DAY_TIME_FARE.multiply(valueOf(segmentDistance));
+                debug(format("Local time is %02d:%02d, DAY time fare, cost is %s",
+                    localMinutesOfDay / 60, localMinutesOfDay % 60, segmentCost));
             } else {
-                ride.addCost(NIGHT_TIME_FARE.multiply(valueOf(segmentDistance)));
+                segmentCost = NIGHT_TIME_FARE.multiply(valueOf(segmentDistance));
+                debug(format("Local time is %02d:%02d, NIGHT time fare, cost is %s",
+                    localMinutesOfDay / 60, localMinutesOfDay % 60, segmentCost));
             }
         }
 
+        ride.addCost(segmentCost);
         ride.lastData = data;
+    }
+
+    private void debug(String msg) {
+        if (log.isDebugEnabled()) {
+            log.debug(msg);
+        }
     }
 }
