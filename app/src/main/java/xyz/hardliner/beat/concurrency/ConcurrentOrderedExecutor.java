@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 public class ConcurrentOrderedExecutor<K> implements AutoCloseable {
 
     private static final int THREADS_NUMBER = Runtime.getRuntime().availableProcessors();
-    private static final int QUEUE_SIZE = 1000 * THREADS_NUMBER;
+    private static final int QUEUE_SIZE = 100 * THREADS_NUMBER;
 
     private final Map<K, QueueWithSemaphore> queues;
     private final ThreadPoolExecutor executor;
@@ -30,7 +30,9 @@ public class ConcurrentOrderedExecutor<K> implements AutoCloseable {
 
         var queue = queues.get(key);
         queue.enqueueTask(task);
-        executor.execute(processQueue(queue));
+        if (queue.semaphore.availablePermits() > 0) {
+            executor.execute(processQueue(queue));
+        }
     }
 
     private Runnable processQueue(QueueWithSemaphore queue) {
@@ -38,8 +40,10 @@ public class ConcurrentOrderedExecutor<K> implements AutoCloseable {
             if (!queue.semaphore.tryAcquire()) {
                 return;
             }
-            while (queue.peekTask() != null) {
-                queue.pollTask().run();
+            synchronized(queue) {
+                while (queue.peekTask() != null) {
+                    queue.pollTask().run();
+                }
             }
             queue.semaphore.release();
         };

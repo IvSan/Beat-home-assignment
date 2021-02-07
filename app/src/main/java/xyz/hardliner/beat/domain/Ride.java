@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.ZoneId;
 
 import static java.math.RoundingMode.HALF_UP;
-import static xyz.hardliner.beat.utils.TimezonesHelper.retrieveTimeZone;
 
 public class Ride {
 
@@ -15,10 +14,10 @@ public class Ride {
     public DataEntry lastData;
     private BigDecimal cost;
 
-    public Ride(DataEntry data) {
+    public Ride(DataEntry data, ZoneId timezone) {
         this.rideId = data.rideId;
         this.lastData = data;
-        this.timezone = retrieveTimeZone(data.position.latLong);
+        this.timezone = timezone;
         this.cost = BigDecimal.valueOf(1.3);
     }
 
@@ -29,7 +28,7 @@ public class Ride {
         return cost.setScale(2, HALF_UP);
     }
 
-    public void addCost(BigDecimal toAdd) {
+    public synchronized void addCost(BigDecimal toAdd) {  // TODO synchronized?
         this.cost = this.cost.add(toAdd);
     }
 

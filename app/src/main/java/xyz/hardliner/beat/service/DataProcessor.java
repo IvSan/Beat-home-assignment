@@ -39,6 +39,8 @@ public class DataProcessor {
                 log.info("Processing done. Execution time: " + (currentTimeMillis() - startTime) / 1000f + " sec.");
             }
 
+            ridesHandler.endProcessing();
+
             var rides = ridesHandler.getRides();
             fileWriter.writeToFile(rides);
             return rides;
@@ -49,8 +51,7 @@ public class DataProcessor {
         while (true) {
             var line = supplier.get();
             try {
-                log.debug(format("Processing line: %s", line));
-                ridesHandler.process(parse(line));
+                ridesHandler.process(parse(line), line);
             } catch (Exception ex) {
                 log.warn(format("While line '%s' processing exception happened: %s", line, ex.getMessage()));
                 if (log.isDebugEnabled()) {

@@ -9,18 +9,22 @@ import java.time.ZoneId;
 
 public class TimezonesHelper {
 
-    private static final TimeZoneEngine engine = TimeZoneEngine.initialize();
+    private final TimeZoneEngine engine;
 
-    public static ZoneId retrieveTimeZone(LatLong latLong) {
+    public TimezonesHelper() {
+        engine = TimeZoneEngine.initialize();
+    }
+
+    public ZoneId retrieveTimeZone(LatLong latLong) {
         return engine.query(latLong.latitude, latLong.longitude)
             .orElseThrow(() -> new IllegalArgumentException("Cannot retrieve timezone for: " + latLong));
     }
 
-    public static int getLocalMinutesOfDay(Position position) {
+    public int getLocalMinutesOfDay(Position position) {
         return getLocalMinutesOfDay(position.timestamp, retrieveTimeZone(position.latLong));
     }
 
-    public static int getLocalMinutesOfDay(long timestamp, ZoneId zoneId) {
+    public int getLocalMinutesOfDay(long timestamp, ZoneId zoneId) {
         var zonedDateTime = Instant.ofEpochSecond(timestamp).atZone(zoneId);
         return zonedDateTime.getHour() * 60 + zonedDateTime.getMinute();
     }

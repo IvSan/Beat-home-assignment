@@ -6,6 +6,7 @@ import xyz.hardliner.beat.domain.DataEntry;
 import xyz.hardliner.beat.domain.LatLong;
 import xyz.hardliner.beat.domain.Position;
 import xyz.hardliner.beat.exception.InvalidDataPoint;
+import xyz.hardliner.beat.utils.TimezonesHelper;
 
 import java.math.BigDecimal;
 
@@ -15,10 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class RidesHandlerTest {
 
     RidesHandler underTest;
+    private final TimezonesHelper timezonesHelper =  new TimezonesHelper();
 
     @BeforeEach
     public void initHandler() {
-        underTest = new RidesHandler();
+        underTest = new RidesHandler(timezonesHelper);
     }
 
     @Test

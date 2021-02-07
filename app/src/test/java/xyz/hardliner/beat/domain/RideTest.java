@@ -12,7 +12,7 @@ class RideTest {
     @Test
     void shouldCreateRide() {
         var datapoint = new DataEntry(855L, new Position(new LatLong(38.034659, 23.855761), 1612530824L));
-        var ride = new Ride(datapoint);
+        var ride = new Ride(datapoint, ZoneId.of("Europe/Athens"));
 
         assertEquals(855L, ride.rideId);
         assertEquals(ZoneId.of("Europe/Athens"), ride.timezone);
@@ -23,7 +23,7 @@ class RideTest {
     @Test
     void shouldCalculateCosts() {
         var datapoint = new DataEntry(855L, new Position(new LatLong(38.034659, 23.855761), 1612530824L));
-        var ride = new Ride(datapoint);
+        var ride = new Ride(datapoint, ZoneId.of("Europe/Athens"));
 
         assertEquals(BigDecimal.valueOf(3.47), ride.getNormalizedCost());
 

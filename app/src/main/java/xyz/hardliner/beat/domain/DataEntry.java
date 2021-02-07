@@ -2,10 +2,10 @@ package xyz.hardliner.beat.domain;
 
 public class DataEntry {
 
-    public final long rideId;
+    public final Long rideId;
     public final Position position;
 
-    public DataEntry(long rideId, Position position) {
+    public DataEntry(Long rideId, Position position) {
         this.rideId = rideId;
         this.position = position;
     }
