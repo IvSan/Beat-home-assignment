@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 public class ConcurrentOrderedExecutor<K> implements AutoCloseable {
 
     private static final int THREADS_NUMBER = Runtime.getRuntime().availableProcessors();
-    private static final int QUEUE_SIZE = 100 * THREADS_NUMBER;
+    private static final int QUEUE_SIZE = 1000 * THREADS_NUMBER;
 
     private final Map<K, QueueWithSemaphore> queues;
     private final ThreadPoolExecutor executor;

@@ -42,7 +42,7 @@ public class SegmentCalculator {
         var segmentSpeed = segmentDistance / segmentTime;
 
         if (segmentSpeed > MAX_VALID_SPEED_KM_SEC) {
-            log.warn(format("Processing line: '%s'. Max allowed speed breach: %.2f km/h",
+            if (IS_DEBUG_LOGGING_ENABLED) log.debug(format("Processing line: '%s'. Max allowed speed breach: %.2f km/h",
                 lineToLog, segmentSpeed / KMH_TO_KMSEC));
             return new CalculationReport(false);
         }

@@ -34,7 +34,7 @@ public class ResultFileWriter {
         for (Ride ride : rides.values()) {
             writer
                 .append(String.valueOf(ride.rideId))
-                .append(", ")
+                .append(",")
                 .append(String.valueOf(ride.getNormalizedCost()))
                 .append("\n");
         }
