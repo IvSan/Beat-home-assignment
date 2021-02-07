@@ -1,5 +1,11 @@
 # Beat-home-assignment
 
+# Important disclaimer
+I haven't noticed the input data guarantee about continuous row blocks for each individual ride until the very last evening of the task's allotted time. My bad.
+The current implementation is created to work with the data without continuous row blocks, rides can be mixed up. So, the solution is not optimized for continuous blocks.  
+I wish to have time to fix it, but it will require some core architecture changes. In general, I would like to have a bit more time than 4 days for such a project, so many things to do better and faster. Current throughput on 6 core CPU is 4kk lines/min. This is not production grade solution.  
+Anyway, I did my best. Hope you will enjoy it.
+
 ## The task
 
 Beat drivers perform thousand of rides per day. In order to ensure that our passengers always receive the
@@ -54,12 +60,6 @@ several GBs worth of samples to your script.
 * Follow best-practices and be well documented throughout.
 
 ## Implementation
-
-### Disclaimer
-I haven't noticed the input data guarantee about **continuous** row blocks for each individual ride until very last evening of task's 
-allotted time. My bad.  
-Current implementation is created to work with the data without continuous row blocks, data can be mixed up.  
-I can fix it, but it will require some time.
 
 ### Assumptions
 
