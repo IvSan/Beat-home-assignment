@@ -14,19 +14,15 @@ public class QueueWithSemaphore {
         this.tasks = new LinkedList<>();
     }
 
-    public boolean isEmpty() {
-        return tasks.isEmpty();
-    }
-
-    public void enqueueTask(Runnable runnable) {
+    public synchronized void enqueueTask(Runnable runnable) {
         tasks.add(runnable);
     }
 
-    public Runnable pollTask() {
+    public synchronized Runnable pollTask() {
         return tasks.poll();
     }
 
-    public int getSize() {
-        return tasks.size();
+    public synchronized Runnable peekTask() {
+        return tasks.peek();
     }
 }

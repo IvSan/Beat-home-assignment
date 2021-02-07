@@ -8,23 +8,15 @@ import java.util.concurrent.TimeUnit;
 
 public class ConcurrentOrderedExecutor<K> implements AutoCloseable {
 
+    private static final int THREADS_NUMBER = Runtime.getRuntime().availableProcessors();
+    private static final int QUEUE_SIZE = 1000 * THREADS_NUMBER;
+
     private final Map<K, QueueWithSemaphore> queues;
-    private final int THREADS_NUMBER = Runtime.getRuntime().availableProcessors();
-    private final int QUEUE_SIZE = 1000 * THREADS_NUMBER;
-    private final ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(THREADS_NUMBER);
+    private final ThreadPoolExecutor executor;
 
     public ConcurrentOrderedExecutor() {
         queues = new HashMap<>();
-    }
-
-    @Override
-    public void close() {
-        try {
-            executor.shutdown();
-            executor.awaitTermination(1L, TimeUnit.MINUTES);
-        } catch (InterruptedException ex) {
-            throw new IllegalStateException("Cannot terminate executor service", ex);
-        }
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(THREADS_NUMBER);
     }
 
     public void planTask(K key, Runnable task) {
@@ -32,12 +24,12 @@ public class ConcurrentOrderedExecutor<K> implements AutoCloseable {
             queues.put(key, new QueueWithSemaphore());
         }
 
-        var queue = queues.get(key);
-        queue.enqueueTask(task);
-
         while (executor.getQueue().size() > QUEUE_SIZE) {
             Thread.onSpinWait();
         }
+
+        var queue = queues.get(key);
+        queue.enqueueTask(task);
         executor.execute(processQueue(queue));
     }
 
@@ -46,11 +38,26 @@ public class ConcurrentOrderedExecutor<K> implements AutoCloseable {
             if (!queue.semaphore.tryAcquire()) {
                 return;
             }
-            while (!queue.isEmpty()) {
-                var task = queue.pollTask();
-                if (task != null) task.run();
+            while (queue.peekTask() != null) {
+                queue.pollTask().run();
             }
             queue.semaphore.release();
         };
+    }
+
+    @Override
+    public void close() {
+        try {
+            executor.shutdown();
+            executor.awaitTermination(1L, TimeUnit.MINUTES);
+            for (QueueWithSemaphore queue : queues.values()) {
+                while (queue.peekTask() != null) {
+                    var task = queue.pollTask();
+                    task.run();
+                }
+            }
+        } catch (InterruptedException ex) {
+            throw new IllegalStateException("Cannot terminate executor service", ex);
+        }
     }
 }
