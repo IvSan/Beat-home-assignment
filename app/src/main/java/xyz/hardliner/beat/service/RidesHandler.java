@@ -7,7 +7,6 @@ import xyz.hardliner.beat.domain.DataEntry;
 import xyz.hardliner.beat.domain.Ride;
 import xyz.hardliner.beat.utils.TimezonesHelper;
 
-import java.math.BigDecimal;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -23,9 +22,10 @@ public class RidesHandler {
     private final ConcurrentOrderedExecutor<Long> executor;
     private final Map<Long, Ride> rides;
 
-    public RidesHandler(TimezonesHelper timezonesHelper) { // TODO signature
+    public RidesHandler(TimezonesHelper timezonesHelper,
+                        SegmentCalculator segmentCalculator) {
         this.timezonesHelper = timezonesHelper;
-        segmentCalculator = new SegmentCalculator(timezonesHelper);
+        this.segmentCalculator = segmentCalculator;
         executor = new ConcurrentOrderedExecutor<>();
         rides = new ConcurrentHashMap<>();
     }
@@ -59,8 +59,9 @@ public class RidesHandler {
 
     private void updateExistingRide(DataEntry data, String lineToLog) {
         var ride = rides.get(data.rideId);
-        var cost = segmentCalculator.calculateSegmentCost(ride.lastData.position, data.position, ride.timezone, lineToLog);
-        ride.addCost(cost);
-        if (cost.compareTo(BigDecimal.ZERO) > 0) ride.lastData = data; // TODO rewrite with calc report;
+        var calculation = segmentCalculator.calculateSegmentCost(ride.lastData.position, data.position, ride.timezone, lineToLog);
+        if (calculation.isValid) {
+            ride.updateRide(calculation.cost, data);
+        }
     }
 }

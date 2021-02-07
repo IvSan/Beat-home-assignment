@@ -28,10 +28,6 @@ public class Ride {
         return cost.setScale(2, HALF_UP);
     }
 
-    public synchronized void addCost(BigDecimal toAdd) {  // TODO synchronized?
-        this.cost = this.cost.add(toAdd);
-    }
-
     @Override
     public String toString() {
         return "Ride{" +
@@ -39,5 +35,10 @@ public class Ride {
             ", timezone=" + timezone +
             ", cost=" + cost +
             '}';
+    }
+
+    public synchronized void updateRide(BigDecimal toAdd, DataEntry data) {
+        cost = cost.add(toAdd);
+        lastData = data;
     }
 }

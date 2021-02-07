@@ -21,14 +21,17 @@ class RideTest {
     }
 
     @Test
-    void shouldCalculateCosts() {
+    void shouldUpdateRide() {
         var datapoint = new DataEntry(855L, new Position(new LatLong(38.034659, 23.855761), 1612530824L));
         var ride = new Ride(datapoint, ZoneId.of("Europe/Athens"));
 
         assertEquals(BigDecimal.valueOf(3.47), ride.getNormalizedCost());
 
-        ride.addCost(BigDecimal.valueOf(2.985));
+        var dataToUpdate = new DataEntry(855L, new Position(new LatLong(38.035, 23.856), 1612530854L));
+
+        ride.updateRide(BigDecimal.valueOf(2.985), dataToUpdate);
 
         assertEquals(BigDecimal.valueOf(4.29), ride.getNormalizedCost());
+        assertEquals(dataToUpdate, ride.lastData);
     }
 }

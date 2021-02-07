@@ -15,6 +15,7 @@ class ConcurrentOrderedExecutorTest {
     void shouldSaveOrderWithinOneKey() {
         int keysNumber = 300;
         int updatesNumberPerKey = 300;
+
         ConcurrentOrderedExecutor<Long> underTest = new ConcurrentOrderedExecutor<>();
         Map<Long, List<Integer>> verificationData = new ConcurrentHashMap<>();
 

@@ -2,6 +2,7 @@ package xyz.hardliner.beat.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xyz.hardliner.beat.domain.CalculationReport;
 import xyz.hardliner.beat.domain.Position;
 import xyz.hardliner.beat.utils.TimezonesHelper;
 
@@ -35,7 +36,7 @@ public class SegmentCalculator {
         this.timezonesHelper = timezonesHelper;
     }
 
-    public BigDecimal calculateSegmentCost(Position start, Position stop, ZoneId timezone, String lineToLog) {
+    public CalculationReport calculateSegmentCost(Position start, Position stop, ZoneId timezone, String lineToLog) {
         var segmentDistance = start.latLong.distanceTo(stop.latLong);
         var segmentTime = stop.timestamp - start.timestamp;
         var segmentSpeed = segmentDistance / segmentTime;
@@ -43,10 +44,11 @@ public class SegmentCalculator {
         if (segmentSpeed > MAX_VALID_SPEED_KM_SEC) {
             log.warn(format("Processing line: '%s'. Max allowed speed breach: %.2f km/h",
                 lineToLog, segmentSpeed / KMH_TO_KMSEC));
-            return BigDecimal.ZERO;
+            return new CalculationReport(false);
         }
 
         BigDecimal segmentCost;
+
         if (segmentDistance == 0.0d || segmentSpeed < MAX_IDLE_SPEED_KM_SEC) {
             segmentCost = IDLE_FARE.multiply(valueOf(segmentTime));
             if (IS_DEBUG_LOGGING_ENABLED) log.debug(format(
@@ -56,12 +58,9 @@ public class SegmentCalculator {
             var localMinutesOfDay = timezonesHelper.getLocalMinutesOfDay(stop.timestamp, timezone);
             if (localMinutesOfDay == 0 || localMinutesOfDay > DAY_NIGHT_CHANGING_MINUTE) {
                 segmentCost = DAY_TIME_FARE.multiply(valueOf(segmentDistance));
-                if (IS_DEBUG_LOGGING_ENABLED) {
-                    log.debug(format(
-                        "Processing line: '%s'. S = %f km, dt = %d sec, V = %f km/h, Local time is %02d:%02d, DAY time fare, cost is %s",
-                        lineToLog, segmentDistance, segmentTime, segmentSpeed / KMH_TO_KMSEC, localMinutesOfDay / 60, localMinutesOfDay % 60, segmentCost));
-                    log.debug("Previous position: " + start);
-                }
+                if (IS_DEBUG_LOGGING_ENABLED) log.debug(format(
+                    "Processing line: '%s'. S = %f km, dt = %d sec, V = %f km/h, Local time is %02d:%02d, DAY time fare, cost is %s",
+                    lineToLog, segmentDistance, segmentTime, segmentSpeed / KMH_TO_KMSEC, localMinutesOfDay / 60, localMinutesOfDay % 60, segmentCost));
             } else {
                 segmentCost = NIGHT_TIME_FARE.multiply(valueOf(segmentDistance));
                 if (IS_DEBUG_LOGGING_ENABLED) log.debug(format(
@@ -70,7 +69,7 @@ public class SegmentCalculator {
             }
         }
 
-        return segmentCost;
+        return new CalculationReport(segmentCost);
     }
 
 }

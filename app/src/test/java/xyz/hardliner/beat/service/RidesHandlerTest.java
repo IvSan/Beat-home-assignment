@@ -5,29 +5,28 @@ import org.junit.jupiter.api.Test;
 import xyz.hardliner.beat.domain.DataEntry;
 import xyz.hardliner.beat.domain.LatLong;
 import xyz.hardliner.beat.domain.Position;
-import xyz.hardliner.beat.exception.InvalidDataPoint;
 import xyz.hardliner.beat.utils.TimezonesHelper;
 
 import java.math.BigDecimal;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RidesHandlerTest {
 
     RidesHandler underTest;
-    private final TimezonesHelper timezonesHelper =  new TimezonesHelper();
+    private final TimezonesHelper timezonesHelper = new TimezonesHelper();
 
     @BeforeEach
     public void initHandler() {
-        underTest = new RidesHandler(timezonesHelper);
+        underTest = new RidesHandler(timezonesHelper, new SegmentCalculator(timezonesHelper));
     }
 
     @Test
     void shouldCreateRide() {
         var datapoint = new DataEntry(855L, new Position(new LatLong(38.034659, 23.855761), 1612530824L));
 
-        underTest.process(datapoint);
+        underTest.process(datapoint, "testing");
+        underTest.endProcessing();
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(datapoint, underTest.getRides().get(855L).lastData);
@@ -42,9 +41,10 @@ class RidesHandlerTest {
         // s=2.403km dt=150s v~=57.68km/h daytime cost~=1.77822
         var stop = new DataEntry(855L, new Position(new LatLong(38.067659, 23.856661), 1612531103L));
 
-        underTest.process(start);
-        underTest.process(checkpoint);
-        underTest.process(stop);
+        underTest.process(start, "testing");
+        underTest.process(checkpoint, "testing");
+        underTest.process(stop, "testing");
+        underTest.endProcessing();
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(stop, underTest.getRides().get(855L).lastData);
@@ -59,9 +59,10 @@ class RidesHandlerTest {
         // s=2.403km dt=150s v~=57.68km/h nighttime cost~=3.1239
         var stop = new DataEntry(855L, new Position(new LatLong(38.067659, 23.856661), 1612476191L));
 
-        underTest.process(start);
-        underTest.process(checkpoint);
-        underTest.process(stop);
+        underTest.process(start, "testing");
+        underTest.process(checkpoint, "testing");
+        underTest.process(stop, "testing");
+        underTest.endProcessing();
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(stop, underTest.getRides().get(855L).lastData);
@@ -78,10 +79,11 @@ class RidesHandlerTest {
         // s=2.403km dt=150s v~=57.68km/h daytime cost~=1.77822
         var stop = new DataEntry(855L, new Position(new LatLong(38.067659, 23.856661), 1612531103L));
 
-        underTest.process(start);
-        underTest.process(checkpoint1);
-        underTest.process(checkpoint2);
-        underTest.process(stop);
+        underTest.process(start, "testing");
+        underTest.process(checkpoint1, "testing");
+        underTest.process(checkpoint2, "testing");
+        underTest.process(stop, "testing");
+        underTest.endProcessing();
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(stop, underTest.getRides().get(855L).lastData);
@@ -98,10 +100,11 @@ class RidesHandlerTest {
         // s=2.403km dt=150s v~=57.68km/h daytime cost~=1.77822
         var stop = new DataEntry(855L, new Position(new LatLong(38.067659, 23.856661), 1612494191L));
 
-        underTest.process(start);
-        underTest.process(checkpoint1);
-        underTest.process(checkpoint2);
-        underTest.process(stop);
+        underTest.process(start, "testing");
+        underTest.process(checkpoint1, "testing");
+        underTest.process(checkpoint2, "testing");
+        underTest.process(stop, "testing");
+        underTest.endProcessing();
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(stop, underTest.getRides().get(855L).lastData);
@@ -118,14 +121,11 @@ class RidesHandlerTest {
         // s=2.403km dt=80s v~=108.14km/h invalid
         var stop = new DataEntry(855L, new Position(new LatLong(38.049559, 23.841661), 1612531183L));
 
-        underTest.process(start);
-        underTest.process(checkpoint1);
-        underTest.process(checkpoint2);
-        Exception exception = assertThrows(InvalidDataPoint.class, () -> {
-            underTest.process(stop);
-        });
-
-        assertEquals("Max allowed speed breach: 108.14 km/h", exception.getMessage());
+        underTest.process(start, "testing");
+        underTest.process(checkpoint1, "testing");
+        underTest.process(checkpoint2, "testing");
+        underTest.process(stop, "testing");
+        underTest.endProcessing();
 
         assertEquals(1, underTest.getRides().size());
         assertEquals(checkpoint2, underTest.getRides().get(855L).lastData);

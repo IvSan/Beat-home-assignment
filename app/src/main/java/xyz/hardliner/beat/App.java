@@ -11,6 +11,7 @@ import xyz.hardliner.beat.service.DataProcessor;
 import xyz.hardliner.beat.service.FileReader;
 import xyz.hardliner.beat.service.ResultFileWriter;
 import xyz.hardliner.beat.service.RidesHandler;
+import xyz.hardliner.beat.service.SegmentCalculator;
 import xyz.hardliner.beat.utils.TimezonesHelper;
 
 public class App {
@@ -23,9 +24,10 @@ public class App {
         var output = cmd.getOptionValue("o");
         validateOptions(input, output);
 
+        var timezonesHelper = new TimezonesHelper();
         var dataProcessor = new DataProcessor(
             new FileReader(input),
-            new RidesHandler(new TimezonesHelper()),
+            new RidesHandler(timezonesHelper, new SegmentCalculator(timezonesHelper)),
             new ResultFileWriter(output));
 
         try {
