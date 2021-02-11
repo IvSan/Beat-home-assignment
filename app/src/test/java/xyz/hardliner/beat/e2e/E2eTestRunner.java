@@ -6,8 +6,12 @@ import org.junit.jupiter.api.Test;
 import xyz.hardliner.beat.App;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Scanner;
+import java.util.Set;
 
 import static java.nio.file.Files.deleteIfExists;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,20 +28,27 @@ public class E2eTestRunner {
             "-o", "./src/test/resources/output_for_given_paths.csv"
         });
 
-        var expected = new File("./src/test/resources/expected_output_for_given_paths.csv");
-        var actual = new File("./src/test/resources/output_for_given_paths.csv");
+        var expected = "./src/test/resources/expected_output_for_given_paths.csv";
+        var actual = "./src/test/resources/output_for_given_paths.csv";
 
-        assertEquals(
-            FileUtils.readFileToString(expected, "utf-8"),
-            FileUtils.readFileToString(actual, "utf-8"));
+        assertEquals(readFileToSetOfLines(expected), readFileToSetOfLines(actual));
 
-        deleteIfExists(actual.toPath());
+        deleteIfExists(Path.of(actual));
+    }
+
+    private Set<String> readFileToSetOfLines(String path) throws FileNotFoundException {
+        var result = new HashSet<String>();
+        var sc = new Scanner(new File(path));
+        while (sc.hasNext()) {
+            result.add(sc.nextLine());
+        }
+        return result;
     }
 
     @Test
     void shouldProcessRandomData() throws ParseException, IOException {
 
-        prepareMockDataset("./src/test/resources/generated_paths.csv", 2000);
+        prepareMockDataset("./src/test/resources/generated_paths.csv", 1000);
 
         var app = new App();
         app.main(new String[]{
