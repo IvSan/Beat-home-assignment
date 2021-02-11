@@ -36,10 +36,10 @@ public class App {
         );
 
         try (var dataSaver = new ToFileDataSaver(output)) {
-            var timeZonesHelper = new TimezonesHelper();
+            var timezonesHelper = new TimezonesHelper();
             var dataProcessor = new DataProcessor(
-                new FareByRulesCalculator(timeZonesHelper, localRules),
-                new FromFileDataSupplier(input, timeZonesHelper),
+                new FareByRulesCalculator(timezonesHelper, localRules),
+                new FromFileDataSupplier(input, timezonesHelper),
                 dataSaver
             );
 

@@ -14,21 +14,21 @@ public class GreeceRulebook implements Rulebook {
 
     private static final Logger log = LoggerFactory.getLogger(GreeceRulebook.class);
 
-    private static final BigDecimal MIN_FARE = BigDecimal.valueOf(3.47);
+    public static final BigDecimal MIN_FARE = BigDecimal.valueOf(3.47);
 
-    private static final int DAY_NIGHT_CHANGING_HOUR = 5;
-    private static final int DAY_NIGHT_CHANGING_MINUTE = DAY_NIGHT_CHANGING_HOUR * 60;
+    public static final int DAY_NIGHT_CHANGING_HOUR = 5;
+    public static final int DAY_NIGHT_CHANGING_MINUTE = DAY_NIGHT_CHANGING_HOUR * 60;
 
-    private static final BigDecimal FLAG_FARE = valueOf(1.3);
-    private static final BigDecimal DAY_TIME_FARE_PER_KM = valueOf(0.74);
-    private static final BigDecimal NIGHT_TIME_FARE_PER_KM = valueOf(1.3);
-    private static final BigDecimal IDLE_FARE_PER_SEC = valueOf(11.90 / 3600);
+    public static final BigDecimal FLAG_FARE = valueOf(1.3);
+    public static final BigDecimal DAY_TIME_FARE_PER_KM = valueOf(0.74);
+    public static final BigDecimal NIGHT_TIME_FARE_PER_KM = valueOf(1.3);
+    public static final BigDecimal IDLE_FARE_PER_SEC = valueOf(11.90 / 3600);
 
-    private static final int MAX_VALID_SPEED_KM_H = 100;
-    private static final int MAX_IDLE_SPEED_KM_H = 10;
-    private static final float KMH_TO_KMSEC = 0.00027778f;
-    private static final float MAX_VALID_SPEED_KM_SEC = MAX_VALID_SPEED_KM_H * KMH_TO_KMSEC;
-    private static final float MAX_IDLE_SPEED_KM_SEC = MAX_IDLE_SPEED_KM_H * KMH_TO_KMSEC;
+    public static final int MAX_VALID_SPEED_KM_H = 100;
+    public static final int MAX_IDLE_SPEED_KM_H = 10;
+    public static final float KMH_TO_KMSEC = 0.00027778f;
+    public static final float MAX_VALID_SPEED_KM_SEC = MAX_VALID_SPEED_KM_H * KMH_TO_KMSEC;
+    public static final float MAX_IDLE_SPEED_KM_SEC = MAX_IDLE_SPEED_KM_H * KMH_TO_KMSEC;
 
     @Override
     public RideReport applyRulesOnRide(RideReport report) {

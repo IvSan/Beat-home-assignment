@@ -2,12 +2,11 @@ package xyz.hardliner.beat.utils;
 
 import net.iakovlev.timeshape.TimeZoneEngine;
 import xyz.hardliner.beat.domain.LatLong;
-import xyz.hardliner.beat.domain.Position;
 
 import java.time.Instant;
 import java.time.ZoneId;
 
-public class TimezonesHelper {
+public class TimezonesHelper implements TimezonesManager {
 
     private final TimeZoneEngine engine;
 

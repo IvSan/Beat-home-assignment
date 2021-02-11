@@ -2,7 +2,7 @@ package xyz.hardliner.beat.service.pipeline;
 
 import xyz.hardliner.beat.domain.DataBatch;
 import xyz.hardliner.beat.domain.DataEntry;
-import xyz.hardliner.beat.utils.TimezonesHelper;
+import xyz.hardliner.beat.utils.TimezonesManager;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -18,16 +18,15 @@ public class FromFileDataSupplier implements DataSupplier {
 
     public final String path;
 
-    private final TimezonesHelper timezonesHelper;
-    private final FileInputStream inputStream;
+    private final TimezonesManager tzManager;
     private final Scanner scanner;
     private DataEntry firstDataEntryOfNextRide;
 
-    public FromFileDataSupplier(String path, TimezonesHelper timezonesHelper) {
+    public FromFileDataSupplier(String path, TimezonesManager tzManager) {
         this.path = path;
-        this.timezonesHelper = timezonesHelper;
+        this.tzManager = tzManager;
         try {
-            inputStream = new FileInputStream(path);
+            var inputStream = new FileInputStream(path);
             scanner = new Scanner(inputStream, StandardCharsets.UTF_8);
             firstDataEntryOfNextRide = parse(scanner.nextLine());
         } catch (FileNotFoundException ex) {
@@ -43,7 +42,7 @@ public class FromFileDataSupplier implements DataSupplier {
 
         var batch = new DataBatch(
             firstDataEntryOfNextRide.rideId,
-            timezonesHelper.retrieveTimeZone(firstDataEntryOfNextRide.position.latLong),
+            tzManager.retrieveTimeZone(firstDataEntryOfNextRide.position.latLong),
             new ArrayList<>(Arrays.asList(firstDataEntryOfNextRide.position)));
 
         try {

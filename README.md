@@ -47,19 +47,21 @@ We expect you to deliver:
 3. A comprehensive unit and end-to-end test suit for your code.
 
 ### Notes
-* In order to calculate the distance between two (lat,lng) pairs you can use the Haversine distance
-formula.  
-* Your code should be capable of ingesting and processing large datasets. Assume we will try to pipe
-several GBs worth of samples to your script.  
+
+* In order to calculate the distance between two (lat,lng) pairs you can use the Haversine distance formula.
+* Your code should be capable of ingesting and processing large datasets. Assume we will try to pipe several GBs worth
+  of samples to your script.
 * Follow best-practices and be well documented throughout.
 
 ## Implementation
+
+Test coverage is `90%`
 
 ### Assumptions
 
 All ride cost calculations will be processed in a timezone of first occurred location.
 
-### Benchmarking 
+### Benchmarking
 
 Program has been tested locally on 6-core CPU.  
 Throughput is about 7_000_000 lines per minute.  

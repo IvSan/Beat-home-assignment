@@ -9,7 +9,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class TimezonesHelperTest {
 
-    private TimezonesHelper underTest = new TimezonesHelper();
+    private final TimezonesHelper underTest = new TimezonesHelper();
 
     @Test
     void shouldRetrieveTimeZone() {

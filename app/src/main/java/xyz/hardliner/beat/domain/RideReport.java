@@ -11,4 +11,12 @@ public class RideReport {
         this.rideId = rideId;
         this.cost = cost;
     }
+
+    @Override
+    public String toString() {
+        return "RideReport{" +
+            "rideId=" + rideId +
+            ", cost=" + cost +
+            '}';
+    }
 }

@@ -7,7 +7,7 @@ import xyz.hardliner.beat.domain.Position;
 import xyz.hardliner.beat.domain.RideReport;
 import xyz.hardliner.beat.domain.SegmentReport;
 import xyz.hardliner.beat.service.rule.Rulebook;
-import xyz.hardliner.beat.utils.TimezonesHelper;
+import xyz.hardliner.beat.utils.TimezonesManager;
 
 import java.math.BigDecimal;
 import java.time.ZoneId;
@@ -20,12 +20,12 @@ public class FareByRulesCalculator implements FareCalculator {
 
     private static final Logger log = LoggerFactory.getLogger(FareByRulesCalculator.class);
 
-    private final TimezonesHelper timezonesHelper;
+    private final TimezonesManager tzManager;
     public final Map<ZoneId, Rulebook> localRules;
 
-    public FareByRulesCalculator(TimezonesHelper timezonesHelper,
+    public FareByRulesCalculator(TimezonesManager timezonesHelper,
                                  Map<ZoneId, Rulebook> localRules) {
-        this.timezonesHelper = timezonesHelper;
+        this.tzManager = timezonesHelper;
         this.localRules = localRules;
     }
 
@@ -55,7 +55,7 @@ public class FareByRulesCalculator implements FareCalculator {
     private SegmentReport calculateSegment(Position start, Position stop, ZoneId timezone) {
         var segmentDistance = start.latLong.distanceTo(stop.latLong);
         var segmentTime = stop.timestamp - start.timestamp;
-        var localMinutesOfDay = timezonesHelper.getLocalMinutesOfDay(stop.timestamp, timezone);
+        var localMinutesOfDay = tzManager.getLocalMinutesOfDay(stop.timestamp, timezone);
 
         return new SegmentReport(segmentDistance, segmentTime, localMinutesOfDay);
     }
