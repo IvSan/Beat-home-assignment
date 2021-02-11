@@ -20,10 +20,6 @@ public class TimezonesHelper {
             .orElseThrow(() -> new IllegalArgumentException("Cannot retrieve timezone for: " + latLong));
     }
 
-    public int getLocalMinutesOfDay(Position position) {
-        return getLocalMinutesOfDay(position.timestamp, retrieveTimeZone(position.latLong));
-    }
-
     public int getLocalMinutesOfDay(long timestamp, ZoneId zoneId) {
         var zonedDateTime = Instant.ofEpochSecond(timestamp).atZone(zoneId);
         return zonedDateTime.getHour() * 60 + zonedDateTime.getMinute();

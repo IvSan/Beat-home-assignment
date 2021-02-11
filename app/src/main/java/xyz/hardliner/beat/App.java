@@ -7,37 +7,43 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import xyz.hardliner.beat.service.DataProcessor;
-import xyz.hardliner.beat.service.FileReader;
-import xyz.hardliner.beat.service.ResultFileWriter;
-import xyz.hardliner.beat.service.RidesHandler;
-import xyz.hardliner.beat.service.SegmentCalculator;
+import xyz.hardliner.beat.service.pipeline.FromFileDataSupplier;
+import xyz.hardliner.beat.service.pipeline.ToFileDataSaver;
+import xyz.hardliner.beat.service.processing.DataProcessor;
+import xyz.hardliner.beat.service.processing.FareByRulesCalculator;
+import xyz.hardliner.beat.service.rule.GreeceRulebook;
+import xyz.hardliner.beat.service.rule.Rulebook;
 import xyz.hardliner.beat.utils.TimezonesHelper;
+
+import java.io.IOException;
+import java.time.ZoneId;
+import java.util.Map;
 
 public class App {
 
     private static final Logger log = LoggerFactory.getLogger(App.class);
 
-    public static void main(String[] args) throws ParseException {
+    public static void main(String[] args) throws ParseException, IOException {
         var cmd = commandLine(args);
         var input = cmd.getOptionValue("i");
         var output = cmd.getOptionValue("o");
         validateOptions(input, output);
 
-        var timezonesHelper = new TimezonesHelper();
-        var dataProcessor = new DataProcessor(
-            new FileReader(input),
-            new RidesHandler(timezonesHelper, new SegmentCalculator(timezonesHelper)),
-            new ResultFileWriter(output));
+        Map<ZoneId, Rulebook> localRules = Map.of(
+            ZoneId.of("Europe/Athens"), new GreeceRulebook()
+        );
 
-        try {
+        try (var dataSaver = new ToFileDataSaver(output)) {
+            var timeZonesHelper = new TimezonesHelper();
+            var dataProcessor = new DataProcessor(
+                new FareByRulesCalculator(timeZonesHelper, localRules),
+                new FromFileDataSupplier(input, timeZonesHelper),
+                dataSaver
+            );
+
             dataProcessor.process();
         } catch (Exception ex) {
-            if (log.isDebugEnabled()) {
-                log.error("Cannot process data: " + ex.getMessage(), ex);
-            } else {
-                log.error("Cannot process data: " + ex.getMessage());
-            }
+            log.error("Cannot process data: " + ex.getMessage(), ex);
         }
     }
 

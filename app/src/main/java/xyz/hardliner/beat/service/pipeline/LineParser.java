@@ -1,4 +1,4 @@
-package xyz.hardliner.beat.service;
+package xyz.hardliner.beat.service.pipeline;
 
 import xyz.hardliner.beat.domain.DataEntry;
 import xyz.hardliner.beat.domain.LatLong;
