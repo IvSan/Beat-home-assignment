@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.time.ZoneId;
 import java.util.Map;
 
+import static java.lang.System.currentTimeMillis;
+
 public class App {
 
     private static final Logger log = LoggerFactory.getLogger(App.class);
@@ -41,7 +43,9 @@ public class App {
                 dataSaver
             );
 
+            long startTime = currentTimeMillis();
             dataProcessor.process();
+            log.info("Processing done. Execution time: " + (currentTimeMillis() - startTime) / 1000f + " sec.");
         } catch (Exception ex) {
             log.error("Cannot process data: " + ex.getMessage(), ex);
         }

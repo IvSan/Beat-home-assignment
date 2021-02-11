@@ -1,11 +1,5 @@
 # Beat-home-assignment
 
-# Important disclaimer
-I haven't noticed the input data guarantee about continuous row blocks for each individual ride until the very last evening of the task's allotted time. My bad.
-The current implementation is created to work with the data without continuous row blocks, rides can be mixed up. So, the solution is not optimized for continuous blocks.  
-I wish to have time to fix it, but it will require some core architecture changes. In general, I would like to have a bit more time than 4 days for such a project, so many things to do better and faster. Current throughput on 6 core CPU is 4kk lines/min. This is not production grade solution.  
-Anyway, I did my best. Hope you will enjoy it.
-
 ## The task
 
 Beat drivers perform thousand of rides per day. In order to ensure that our passengers always receive the
@@ -63,31 +57,15 @@ several GBs worth of samples to your script.
 
 ### Assumptions
 
-Based on technical requirement
-> Assume we will try to pipe several GBs worth of samples to your script.
-
-My assumption would be an idea, that runtime environment is capable to keep in memory all **rides** (ride id, total cost and
-last position), which number will be several orders of magnitude fewer than number of samples in the input dataset.  
-So the solution do not require interim result writes to file.
-
-Also, all ride cost calculations will be processed in a timezone of first occurred location.
-
-### Prepare data
-The implementation does not require the input dataset to contain continuous row blocks for each individual ride. Different rides can be mixed up.
-However, strictly ascending timestamp order within one ride is required.
-
-Please sort the input dataset by a timestamp, that is crucial for a proper program functioning.  
-The best way to do it is use of `sort` form [GNU coreutils](https://www.gnu.org/software/coreutils/).  
-Software is often preinstalled on Linux systems. Also, it's available for [MacOs](https://formulae.brew.sh/formula/coreutils).  
-Use the command: `gsort -n -t , -k 4 paths.csv > time_sorted_paths.csv`
+All ride cost calculations will be processed in a timezone of first occurred location.
 
 ### Benchmarking 
 
 Program has been tested locally on 6-core CPU.  
-Throughput is about 4_000_000 lines per minute.  
-Or roughly 200 Mb of data per minute.
+Throughput is about 7_000_000 lines per minute.  
+Or roughly 400 Mb of data per minute.
 
-4183277 lines or 204.8 Mb per 67.506 sec.
+7536424 lines or 402.1 Mb per 74.774 sec.
 
 ## Usage
 
