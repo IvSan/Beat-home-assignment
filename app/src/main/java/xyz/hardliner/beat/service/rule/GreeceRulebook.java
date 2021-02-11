@@ -19,9 +19,10 @@ public class GreeceRulebook implements Rulebook {
     private static final int DAY_NIGHT_CHANGING_HOUR = 5;
     private static final int DAY_NIGHT_CHANGING_MINUTE = DAY_NIGHT_CHANGING_HOUR * 60;
 
-    private static final BigDecimal DAY_TIME_FARE = valueOf(0.74);
-    private static final BigDecimal NIGHT_TIME_FARE = valueOf(1.3);
-    private static final BigDecimal IDLE_FARE = valueOf(11.90 / 3600);
+    private static final BigDecimal FLAG_FARE = valueOf(1.3);
+    private static final BigDecimal DAY_TIME_FARE_PER_KM = valueOf(0.74);
+    private static final BigDecimal NIGHT_TIME_FARE_PER_KM = valueOf(1.3);
+    private static final BigDecimal IDLE_FARE_PER_SEC = valueOf(11.90 / 3600);
 
     private static final int MAX_VALID_SPEED_KM_H = 100;
     private static final int MAX_IDLE_SPEED_KM_H = 10;
@@ -31,6 +32,7 @@ public class GreeceRulebook implements Rulebook {
 
     @Override
     public RideReport applyRulesOnRide(RideReport report) {
+        report.cost = report.cost.add(FLAG_FARE);
         if (report.cost.compareTo(MIN_FARE) < 0) {
             report.cost = MIN_FARE;
         }
@@ -40,12 +42,12 @@ public class GreeceRulebook implements Rulebook {
     @Override
     public BigDecimal applyRulesOnSegment(SegmentReport report) {
         if (report.distance == 0.0d || report.speed < MAX_IDLE_SPEED_KM_SEC) {
-            return IDLE_FARE.multiply(valueOf(report.duration));
+            return IDLE_FARE_PER_SEC.multiply(valueOf(report.duration));
         } else {
             if (report.localMinutesOfDay == 0 || report.localMinutesOfDay > DAY_NIGHT_CHANGING_MINUTE) {
-                return DAY_TIME_FARE.multiply(valueOf(report.distance));
+                return DAY_TIME_FARE_PER_KM.multiply(valueOf(report.distance));
             } else {
-                return NIGHT_TIME_FARE.multiply(valueOf(report.distance));
+                return NIGHT_TIME_FARE_PER_KM.multiply(valueOf(report.distance));
             }
         }
     }
