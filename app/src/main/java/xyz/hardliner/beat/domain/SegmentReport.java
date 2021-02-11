@@ -16,4 +16,13 @@ public class SegmentReport {
         this.localMinutesOfDay = localMinutesOfDay;
     }
 
+    @Override
+    public String toString() {
+        return "SegmentReport{" +
+            "distance=" + distance +
+            ", duration=" + duration +
+            ", speed=" + speed +
+            ", localMinutesOfDay=" + localMinutesOfDay +
+            '}';
+    }
 }

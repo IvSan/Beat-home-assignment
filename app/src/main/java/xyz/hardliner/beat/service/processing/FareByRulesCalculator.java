@@ -37,8 +37,6 @@ public class FareByRulesCalculator implements FareCalculator {
                 lastValidPosition = position;
                 var segmentCost = rulebook.applyRulesOnSegment(report);
                 cost = cost.add(segmentCost);
-            } else {
-                System.out.println("");
             }
         }
 
